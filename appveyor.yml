@@ -1,3 +1,38 @@
-version: 1.0.{build}
-build:
-  verbosity: minimal 
+
+
+# AppVeyor Environment
+# https://www.appveyor.com/docs/build-environment/
+version: 0.0.0.{build}
+clone_folder: ~/projects
+image: Ubuntu
+skip_tags: true
+shallow_clone: false
+clone_depth: 3
+
+# Maximum concurrent jobs for the project
+max_jobs: 10
+
+branches:
+  # whitelist all branches
+  only:
+    - /.*/
+  # blacklist temp/* branches
+  except:
+    - /temp\/.*/
+
+
+before_build:
+  - sh: echo 'Running scripts before build.'
+
+build_script:
+  - sh: npm run build
+
+before_package:
+  - sh: echo 'Run scripts *after* app is built but *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services).'
+
+# Publish an array of paths to AppVeyor for 3-month storage
+artifacts:
+  - path: package*.json
+
+# Deployment Phase
+# https://www.appveyor.com/docs/deployment/
